@@ -1,0 +1,2 @@
+Similiar to AccomodationTypes we will create AccomodationPackages
+So i am going to create AccomodationPackagesservice.cs into HMS.Services , and one more controller for AccomodationPackagesController similiar to AccomodationTypesController .

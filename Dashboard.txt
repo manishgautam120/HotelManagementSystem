@@ -1,0 +1,65 @@
+go to project right click >area 
+what is area for admin?
+area means whatever functionallity come under admin permission like index ,it will come under area .one popup window will apperear name as Add Area > Area name = "Dashboard" 
+click on Add 
+
+Area folder has been created inside HotelManagement
+inside Area -you will see there lots of folder have been created one is Controllers ,Models,Veiw. All View and will be his own 
+then i will add one Conteroller into "Controllers" right click>add>Contoller name = DashboardController  
+
+after adding controller go to controller and a veiw for index
+and run the project 
+you will notice it will go to this page and lot many things changed ,its not default page when you run any project
+wait...
+what are the things coming from where ? how would you know ?
+
+https://localhost:44336/Dashboard/Dashboard/Index
+
+in this url first Dashboard is view name 
+next dashboard name is dashboardController and index is veiw .
+how it changed earlier 
+controller/action/id that how it was to access any file through contoller
+
+let's change it (i want when someone hit the url (controller path) the view should appear)
+
+like 
+https://localhost:44336/Dashboard/
+
+veiw(index) should be appear not Area and all..
+   -------------------------------------------------------
+      to have a change open DashboardAreaRegistration.cs file 
+add controller and define by default which controller should hit 
+  new { Controller = "Dashboard", action = "Index", id = UrlParameter.Optional }
+
+rebuilt your project and run 
+
+https://localhost:44336/Dashboard/
+
+you will see same page(index)page able to see that.
+
+on top of all we will be applying admin panel . for that we have to search some free bootstrap for that search startbootstrap>template >simplesidebar
+
+Create one folder name as "Content" inside "Dashboard" which comes under Area
+
+extract the folder > COPY css and vendor folder and paste inside newly created folder name is "Content".and include all the files into projext if not included by default .right click on css file and then option will show to include file.  
+
+then will copy index.html content into _Lauout.cshtml(view) some changes will be there according to need
+
+also i used some awesome fontawsome to increase apperance .
+--------------------------------------------------------------------------
+i want logout buuton work properly 
+if you inspect homepage logoff button then you will see the url that where it action is triggering so basically there are one form and request is submmiting through form.
+in inspection i found forgery token is used which is nice
+go to accout controller
+search logoff
+
+
+
+
+
+
+
+  
+
+
+

@@ -1,0 +1,254 @@
+first try to understand the project and understand the project once this will be done anyone will be able  to create the project 
+
+AccomodationType 
+ID      Name
+1       HotelRoom
+2       Appartment
+
+AccomodationPackage 
+
+ID      AccomodationType      Name                 NoOfRoom     FeePerNight
+1       1                     Standard             1             50
+2       1                     Deluxe               1             70
+3       1                     Suites               1             100
+4       2                     2BedRoom             2             120
+5       2                     3BedRoom             3             150
+
+Accomodations  (Query - (Select * from Accomodations where AccomodationPackageID =2 ))
+ID             AccomodationPackageID      Name
+1               1                         190
+2               1                         191
+3               2                         192      >this will be select from query
+4               1                         193
+5               3                         194
+6               2                         200      >this will be select from query
+7               4                         Appartment no 232   
+8               4                         Appartment no 237
+9               5                         Appartment no 200
+10              4                         Appartment no 231
+
+
+Booking          
+ID         AccomodationsID        FromDate          Duration(No of Stay Nights)
+1               3                22june2019        4   
+
+
+--------------------------------------------------------------------------------
+
+first create a asp.net web project with mvc name as HMS remember this all is for indivisual authentication(authentication null is by default change it by choose option while creating the project)
+
+then right click on solution and add new project and choose C# and choose Classlibrary(.NET framework) name as HMS.Entities
+
+HMS.Entities has been created and existing class has been created we will delete that and will create some more classes for entities
+
+HMS.Entities> in HMS.Entities project we created some classes name as -
+1> AccomodationType.cs
+2> Accomodationpackage.cs
+3> Accomodations.cs
+
+AccomodationType.cs
+in AccomodationType.cs> we will add ID,Name for hotelroom or appartment type  according to accomodationType
+
+similar to that we will create some more classes like Accomodationpackage
+
+Accomodationpackage.cs > will create entities like Id AccomodationTypeID,Name, NoOfRoom FeePerNight and so on
+
+similar to Accomodationpackage.cs or AccomodationType we will create Accomodation.cs and will add entities 
+
+now all those entities we will connect to the database and will take to the databaseand will create automatically same entities intto our database for that i would create one ClassLibary form solution would name as HMS.Data from right click on solution 'HMS'
+
+
+then delete the class.cs which is by defaut class created 
+
+and will add new class name HMSContext.cs
+we will be using Entity Framework for this so go to the market place of visual studio and go to the market place by clicking right click on HMSContext.cs and select package Nuget Manager and then go  to the online and then search for Entity Framework and install it .
+
+after installing go to the HMSContext.cs file and inheritence DbContext by using like HMSContext : DbContext where DbContext is used for quering from database
+
+then right click on DbContext and rightclick go to quick action and then by using suggestion go for generate getter and setter for (nameandconnectionstring,model)
+
+then go to the web config file add connectionstring and after setting connection string take the name of connectionstring and use inside HMSContext inside Base .
+
+---this is most important part ---
+In HMSContext we have to define how many Dbset we have in the project like if i will say Dbset means one is AccomodationType
+so we will write like this public DbSet<AccomodationType> AccomodationTypes { get; set; }  for everyclass we will be doing same ,whatever we created inside HMS.Entities project
+
+
+--this is important part 
+
+enable migration
+go to Tool hover on Nuget package manager and open concole now concole has been opened and on top the scope of project(HMS.Data)change from all or HMS.Data
+
+step-1
+PM> enable-migrations -verbose     (tip-migration (here migration is spell migrations not migration) lot of people do mistake in s not adding in last migrations )
+output you will see
+Using StartUp project 'HMS'.
+Using NuGet project 'HMS.Data'.
+Checking if the context targets an existing database...
+Code First Migrations enabled for project HMS.Data.
+---------tip---
+if some error is coming fix that ,if error will come go to web config file and fix that(https://weblog.west-wind.com/posts/2016/jan/13/resetting-entity-framework-migrations-to-a-clean-slate) 
+
+step-2
+add-migration BasicEntities -verbose               (tip-migration (here migration is spell migration not migrations) )
+
+outut you will see
+Using StartUp project 'HMS'.
+Using NuGet project 'HMS.Data'.
+Scaffolding migration 'BasicEntities'.
+The Designer Code for this migration file includes a snapshot of your current Code First model. This snapshot is used to calculate the changes to your model when you scaffold the next migration. If you make additional changes to your model that you want to include in this migration, then you can re-scaffold it by running 'Add-Migration BasicEntities' again.
+Target database is: 'HMS_DB' (DataSource: (localdb)\MSSQLLocalDB, Provider: System.Data.SqlClient, Origin: Configuration).
+
+step-3
+remember target database should be same whatever you defined in web.config file
+
+PM> update-database -verbose
+Using StartUp project 'HMS'.
+Using NuGet project 'HMS.Data'.
+Specify the '-Verbose' flag to view the SQL statements being applied to the target database.
+Target database is: 'HMS_DB' (DataSource: (localdb)\MSSQLLocalDB, Provider: System.Data.SqlClient, Origin: Configuration).
+Applying explicit migrations: [201912090914436_BasicEntities].
+Applying explicit migration: 201912090914436_BasicEntities.
+CREATE TABLE [dbo].[AccomodationPackages] (
+    [ID] [int] NOT NULL IDENTITY,
+    [AccomodationTypeID] [int] NOT NULL,
+    [Name] [nvarchar](max),
+    [NoOfRoom] [int] NOT NULL,
+    [FeePerNight] [decimal](18, 2) NOT NULL,
+    CONSTRAINT [PK_dbo.AccomodationPackages] PRIMARY KEY ([ID])
+)
+CREATE INDEX [IX_AccomodationTypeID] ON [dbo].[AccomodationPackages]([AccomodationTypeID])
+CREATE TABLE [dbo].[AccomodationTypes] (
+    [ID] [int] NOT NULL IDENTITY,
+    [Name] [nvarchar](max),
+    CONSTRAINT [PK_dbo.AccomodationTypes] PRIMARY KEY ([ID])
+)
+CREATE TABLE [dbo].[Accomodations] (
+    [ID] [int] NOT NULL IDENTITY,
+    [AccomodationPackageID] [int] NOT NULL,
+    [Name] [nvarchar](max),
+    [Description] [nvarchar](max),
+    CONSTRAINT [PK_dbo.Accomodations] PRIMARY KEY ([ID])
+)
+CREATE INDEX [IX_AccomodationPackageID] ON [dbo].[Accomodations]([AccomodationPackageID])
+CREATE TABLE [dbo].[Bookings] (
+    [ID] [int] NOT NULL IDENTITY,
+    [AccomodationID] [int] NOT NULL,
+    [FromDate] [datetime] NOT NULL,
+    [Duration] [int] NOT NULL,
+    CONSTRAINT [PK_dbo.Bookings] PRIMARY KEY ([ID])
+)
+CREATE INDEX [IX_AccomodationID] ON [dbo].[Bookings]([AccomodationID])
+ALTER TABLE [dbo].[AccomodationPackages] ADD CONSTRAINT [FK_dbo.AccomodationPackages_dbo.AccomodationTypes_AccomodationTypeID] FOREIGN KEY ([AccomodationTypeID]) REFERENCES [dbo].[AccomodationTypes] ([ID]) ON DELETE CASCADE
+ALTER TABLE [dbo].[Accomodations] ADD CONSTRAINT [FK_dbo.Accomodations_dbo.AccomodationPackages_AccomodationPackageID] FOREIGN KEY ([AccomodationPackageID]) REFERENCES [dbo].[AccomodationPackages] ([ID]) ON DELETE CASCADE
+ALTER TABLE [dbo].[Bookings] ADD CONSTRAINT [FK_dbo.Bookings_dbo.Accomodations_AccomodationID] FOREIGN KEY ([AccomodationID]) REFERENCES [dbo].[Accomodations] ([ID]) ON DELETE CASCADE
+CREATE TABLE [dbo].[__MigrationHistory] (
+    [MigrationId] [nvarchar](150) NOT NULL,
+    [ContextKey] [nvarchar](300) NOT NULL,
+    [Model] [varbinary](max) NOT NULL,
+    [ProductVersion] [nvarchar](32) NOT NULL,
+    CONSTRAINT [PK_dbo.__MigrationHistory] PRIMARY KEY ([MigrationId], [ContextKey])
+)
+INSERT [dbo].[__MigrationHistory]([MigrationId], [ContextKey], [Model], [ProductVersion])
+VALUES (N'201912090914436_BasicEntities', N'HMS.Data.Migrations.Configuration',  0x1F8B0800000000000400ED5BDB6EE336107D2FD07F10F4D416D928C9BE6C037B17593B698D6E2E889345DF02461A3BC452A42A528183A25FD6877E527FA1A42EB42ED4D589934D1701025BE2CC9033673843CEF8DFBFFF197D58F9C4BA87906346C7F6FEEE9E6D01759987E9726C4762F1E69DFDE1FDF7DF8D8E3D7F657DCEC6BD55E32425E563FB4E88E0D071B87B073EE2BB3E7643C6D942ECBACC7790C79C83BDBD9F9DFD7D07240B5BF2B2ACD1654405F621FE22BF4E187521101122A7CC03C2D3E7F2CD3CE66A9D211F78805C18DBBF9ECE77A74820DB3A221849F973200BDB42943281849CDDE13587B908195DCE03F90091AB8700E4B805221CD2591FAE87775DC0DE815A80B326CC58B91117CCEFC970FF6DAA11A74C3E48AFB6D698D4D9B1D4AD7850AB8EF536B68F5C49C2BC98FD0572BFA6646172C0B2BA51965434A07B5531048AA051D85022F902BE46B17388F97FB1991480E39F66FC19BD1F3480491904B06FF96147E24A0C25293FCB845A138E7D1797C45C01F6309729A581D54CFE9C708134FCFFBC470C8AC61A1E25D7A9E57B614EA5CBF7CD09CCE18EDC828559F0ED357E0074432E3E7748EEE61C8DCAE397C8225721FB2EBF87A26ED8628AA7D34C56819229FA73CD6F4F2ABC4B0E7AFDEFF07AE854A5E2C3E0000 , N'6.2.0-61023')
+
+Running Seed method.
+PM> 
+
+once you can see that running seed is successfull ,then you will be able to 
+----------------------
+then go to view and server explorer and go to databases and go for tables their you would see 5 table has been newly created one is dbo.__MigrationHistory(which store the all migration file history and all) and rest 4 is come from AccomodationPackages,Accomodation,AccomodationTypes,Bookings(these all are has been created from HMSContext.cs file properties )//These HMS.Entities; would be coming from HMS.Entities; so end of the day ,how many table you wanted to create into the database and the what are the fields HMS.Entities have that would be display into the tables
+
+-----------------------------------------User Indivual registration has been started------------
+run the project and do registration in authentication and then u will see that you would be able to get the login but have you think where it data is going ? it not going where i wanted why?because of  by default for indivisual account it create the data inside app_data , how would you trace the data of registration form ? It simple go to the Identity model and remove the ApplicationContext and rebuilt it you will get error ,where ever you will get error that means there-ever used default class for registration . for knowing purpose where the classes used you have to built it then you will know the error and how many times it used 
+
+basically you will get error from
+1-Startup.Auth.cs 
+2-identityConfig.cs
+
+in both placec use HMSContext 
+
+
+and run the application 
+
+i got this error 
+
+
+The entity type ApplicationUser is not part of the model for the current context.
+Description: An unhandled exception occurred during the execution of the current web request. Please review the stack trace for more information about the error and where it originated in the code.
+
+Exception Details: System.InvalidOperationException: The entity type ApplicationUser is not part of the model for the current context.
+
+Source Error: this error is coming from Account controller for identity
+so go to "controller" folder select "Account controller" and then open the file and search ctrl+f (register) than you will see in http post ,var is regiostering for one user which is ApplicationUser is  used in somewhere , to find go to definition of ApplicationUser which is one class? how i know this is one class ?right click on ApplicationUser and then you will see where it is ?this class is used inside IdentityModels(HMS.models) by knowing namespace  .what error is saying ?
+it saying  Application is not part of current context ?why? it saying ,because In our HMSContext the limited dataset has been used like AccomodationTypes, AccomodationPackages,Accomodations,Bookings so database is created for that only 
+<summary-?> for your understanding/summary mean point to remember</summary-?>
+
+<summary-1>go to the Models folder and then IdentityModels.cs you will see class  Application is there which is using Identity user which is reference of types we can see that identityuser is used in reference(Microsoft.ASP.NET.Identity.EntityFramework.IdentityUser)  </summary>    
+
+<summary-2>we will make one more class similiar to this class in "HMS.Entities" and then will add reference from manage nuget package manager of identityUser (add one class inside HMS.Entities name as HMSUser)</summary-2>
+
+<summary-3>for now i am commenting IdentityModel.cs>ApplicationUser  class  to not throw any error or one more thing i can not direct add this into dataset in HMSContext so i need to create one more class name as "HMSUser" in side HMSEntities</summary-3>
+------------
+what we are trying to do ?
+microsoft say ,you no need to create manually separate table for user , they provided seperate Identity Framework to take care of newly automatic table creatation 
+
+
+--------------------------------------
+what is IdentityUser?
+the simply whatever we login the user and while registering the user the and to define the role of user IdentityUser is used therever .
+---------------------------------------------------------------------------------------
+
+
+ So go to the HMS.Entities  right click for mangage nuget package(marketplace) and search "Identity Entity" and install it 
+.After Installation you will get error from  IdentityConfig.cs (solution-only change ApplicationUser to HMSUser& Add missing references) 
+
+one thing you will notice "IdentityModel.cs"> class ApplicationContext has inherited by IdentityDbContext similar to that In HMSContext.cs is inherited by DbContext but it's not right approach while i want to create automatic table for user(registration,login) we have to inherit the same ,similiar to "IdentityModel.cs" and change DbContext to  IdentityDbContext.
+
+While some changes made on  HMSContext.cs file every time we have to add migrations and update the database ,coz whole HMSContext is going to affect one more thing you have to add the package in HMS.Data as well then only framework will take care of it . 
+-----------
+add-migration identityframeworkreference -verbose 
+
+//result - in HMS.Data >Migration > identityframeworkreference has been added
+
+update-database -verbose    
+
+// result -after this should show running seed that mean database has been updated
+-----------
+where ever you get error that model backing of "Class" consider using  code first migration to update database means you you changed the Context file but didn't update on that condition you have to look into visual studio top and go to nuget package concole and select the HMS.Data(Class Library for database) and follow above command and update your database 
+
+
+
+And you can delete IdentityModel once you have understand the all things and run the application
+one registraion has been done successfully go to visual studio >view >Sql server object exploar the table and right click and go to new Query
+select * from AspNetUsers
+
+------------------------User indivisual login is successfull-------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,66 @@
+go to area > controller > add controller > name as AccomodationTypesController
+
+then create veiw for index inside AccomodationTypesController> 
+
+after this we will create one more action in this same page , and will create partial view for that
+
+but the catch is here
+
+our web(client) can not directly talk  to the database because database(Data) is using Entities framework and let suppose in future some other entities going to use in Data. or may browser has some other changes so both side make changes is not adviseable to hard connection on this case i am going to create one service method on that point all web(Client) will inform to Service and all fatched data will back report to Services.
+so services goint to work as interpretor between Web(frontend) and Data(backend)  would name as HMS.Services
+
+after creating HMS.Services will create one class inside HMS.Services would name as AccomodationTypesService.cs 
+
+we will create  object of database and will get all AccomodationTypes from database and will return list of AccomodationTypes.
+
+after this we will create AccomodationTypesService object inside area > accomodationTypesController and will fatch all services inside controller.
+
+and will create ViewModels folder inside area>Dashboard .
+
+and will create class inside ViewModels name AccomodationTypesModels in this we will change the class name AccomodationTypesListingModel return IQrueryable of type Accomodation type .
+
+again back to AccomodationTypeController.cs and we will create object of AccomodationTypesListingModel inside Listing class.
+
+now go to Views inside area >Accomodationtype 
+Then i go to Listing.cshtml which i created earlier as partial view and on this i will be using bootstrap concept for veiwing nice 
+
+on the other hand i would open index.cshtml and then i would add some bootstrap concept into this ,i took model and so many things ,for understanding purpose go through coding
+
+I want that update and delete would be at one time
+
+for that go to AccomodationTypesController and add this 
+        public ActionResult Action()
+        {
+            return View();
+        }
+
+and create a pertial veiw for above 
+
+
+also will create one modal inside ViewModel>AccomodationTypesModels
+
+ 
+
+<script>
+
+$("#createButton").click(function () {
+
+        $.ajax({
+            url: '@Url.Action("Action","AccomodationTypes")',
+        })
+          .done(function(response){
+           $("#actionModal .modal-dialog").html(response);
+           });
+                                     });
+</script>
+
+
+
+
+
+
+
+
+
+
+  
